@@ -1,0 +1,28 @@
+@(user: models.User)(implicit messages: Messages)
+@main(Messages("home.title"), Some(user)) {
+    <div class="container-fluid">
+        <div class="row">
+            <img class="img-thumbnail pull-left gap-right" src="http://placehold.it/150x150">
+            <div>
+                <div class='pull-right'>
+                    <button class="btn btn-primary">Edit this page</button>
+                </div>
+                <h2>{{user.username}}</h2>
+                <h4>{{user.firstname + " " + user.lastname}} - Administrator</h4>
+                <h5>Karma: <span class="badge">0 pts</span></h5>
+                <h5>Member since December 2012</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <h3>About me</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis ac turpis vitae urna semper efficitur sed eu ipsum.
+                    Maecenas nec erat mauris. Curabitur ultricies dictum neque, eget iaculis lorem faucibus ut. Quisque at leo nunc.
+                    Suspendisse turpis felis, sollicitudin et efficitur eget, cursus ut massa. Nulla eu tincidunt diam, eu venenatis
+                    nisl. Cras auctor orci sollicitudin magna imperdiet facilisis. Curabitur elementum nisl accumsan odio volutpat,
+                    sed hendrerit turpis rhoncus. Nulla a libero ac tellus finibus malesuada. Nam sed rutrum felis.</p>
+            </div>
+                <!-- /.col-lg-12 -->
+        </div>
+    </div>
+}

@@ -1,0 +1,42 @@
+@(user: Option[models.User] = None)(implicit messages: Messages)
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">SB Admin v2.0</a>
+        </div>
+        <!-- /.navbar-header -->
+
+        <ul class="nav navbar-top-links navbar-right">
+            @user.map { user =>
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <span>@user.fullName</span>
+                    <img src="@user.avatarURL.getOrElse(routes.Assets.at("../assets/images/silhouette.png"))" height="30px" />
+                </a>
+                <ul class="dropdown-menu dropdown-user">
+                    <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a></li>
+                    <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a></li>
+                    <li class="divider"></li>
+                    <li><a href="@routes.ApplicationController.signOut"><i class="fa fa-sign-out fa-fw"></i>@Messages("sign.out")</a>
+                    </li>
+                </ul>
+                    <!-- /.dropdown-user -->
+            </li>
+            }.getOrElse {
+                <li><a href="@routes.ApplicationController.signIn">@Messages("sign.in")</a></li>
+            }
+            <!-- /.dropdown -->
+
+            <!-- /.dropdown -->
+        </ul>
+        <!-- /.navbar-top-links -->
+
+        @sidebar()
+        <!-- /.navbar-static-side -->
+    </nav>
