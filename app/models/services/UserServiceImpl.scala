@@ -66,4 +66,10 @@ class UserServiceImpl @Inject() (userDAO: UserDAO) extends UserService {
   }
 
   def members(): Future[Seq[User]] = userDAO.all()
+
+  def findByEmail(email: String): Future[Option[User]] = userDAO.find(email)
+
+  override def verifyNotRegistered(loginInfo: LoginInfo): Future[Boolean] = {
+    userDAO.verifyNotRegistered(loginInfo)
+  }
 }

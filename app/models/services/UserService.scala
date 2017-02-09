@@ -1,5 +1,6 @@
 package models.services
 
+import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.api.services.IdentityService
 import com.mohiva.play.silhouette.impl.providers.CommonSocialProfile
 import models.User
@@ -10,6 +11,13 @@ import scala.concurrent.Future
  * Handles actions to users.
  */
 trait UserService extends IdentityService[User] {
+  def verifyNotRegistered(loginInfo: LoginInfo) : Future[Boolean]
+
+
+  //  def
+
+
+  def findByEmail(email: String) : Future[Option[User]]
 
   /**
    * Saves a user.

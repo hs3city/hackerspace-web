@@ -1,12 +1,13 @@
 package models.daos
 
 import java.util.UUID
+import javax.inject.Inject
+
 import com.mohiva.play.silhouette.api.LoginInfo
 import models.User
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import slick.dbio.DBIOAction
-import javax.inject.Inject
 import play.api.db.slick.DatabaseConfigProvider
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+
 import scala.concurrent.Future
 
 /**
@@ -21,6 +22,7 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
 		*
 		* @param loginInfo The login info of the user to find.
 		* @return The found user or None if no user for the given login info could be found.
+		* Except it doesn't check if the the user with this email has another login info in the db...
 		*/
 	def find(loginInfo: LoginInfo) = {
 		val userQuery = for {
@@ -36,11 +38,17 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
 	}
 
 
-	// Does not contain login info! TODO fix
 	def all(): Future[Seq[User]] = {
-		db.run(slickUsers.result).map { dbUsers =>
-			dbUsers.map {
-				user => User(UUID.fromString(user.userID), LoginInfo("", ""), user.firstName, user.lastName, user.fullName, user.email, user.avatarURL)
+
+		val query = for{
+			users <- slickUsers
+			userLoginInfos <- slickUserLoginInfos if users.id === userLoginInfos.userID
+			loginInfos <- slickLoginInfos if userLoginInfos.loginInfoId === loginInfos.id
+		} yield (users, loginInfos)
+
+		db.run(query.result).map { response =>
+			response map {
+				case (user, info) => User(UUID.fromString(user.userID), LoginInfo(info.providerID, info.providerKey), user.firstName, user.lastName, user.fullName, user.email, user.avatarURL)
 			}
 		}
 	}
@@ -54,6 +62,29 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
 	def find(userID: UUID) = {
 		val query = for {
 			dbUser <- slickUsers.filter(_.id === userID.toString)
+			dbUserLoginInfo <- slickUserLoginInfos.filter(_.userID === dbUser.id)
+			dbLoginInfo <- slickLoginInfos.filter(_.id === dbUserLoginInfo.loginInfoId)
+		} yield (dbUser, dbLoginInfo)
+		db.run(query.result.headOption).map {
+			resultOption =>
+				resultOption.map {
+					case (user, loginInfo) =>
+						User(
+							UUID.fromString(user.userID),
+							LoginInfo(loginInfo.providerID, loginInfo.providerKey),
+
+							user.firstName,
+							user.lastName,
+							user.fullName,
+							user.email,
+							user.avatarURL)
+				}
+		}
+	}
+
+	def find(email: String) = {
+		val query = for{
+			dbUser <- slickUsers.filter(_.email === email)
 			dbUserLoginInfo <- slickUserLoginInfos.filter(_.userID === dbUser.id)
 			dbLoginInfo <- slickLoginInfos.filter(_.id === dbUserLoginInfo.loginInfoId)
 		} yield (dbUser, dbLoginInfo)
@@ -85,23 +116,24 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
 		// We don't have the LoginInfo id so we try to get it first.
 		// If there is no LoginInfo yet for this user we retrieve the id on insertion.
 		val loginInfoAction = {
-			val retrieveLoginInfo = slickLoginInfos.filter(
-				info => info.providerID === user.loginInfo.providerID &&
-					info.providerKey === user.loginInfo.providerKey).result.headOption
-			val insertLoginInfo = slickLoginInfos.returning(slickLoginInfos.map(_.id)).
-				into((info, id) => info.copy(id = Some(id))) += dbLoginInfo
+			val retrieveLoginInfo = slickLoginInfos.filter(info => info.providerID === user.loginInfo.providerID && info.providerKey === user.loginInfo.providerKey).result.headOption
+			val insertLoginInfo = slickLoginInfos.returning(slickLoginInfos.map(_.id)).into((info, id) => info.copy(id = Some(id))) += dbLoginInfo
 			for {
 				loginInfoOption <- retrieveLoginInfo
-				loginInfo <- loginInfoOption.map(DBIO.successful(_)).getOrElse(insertLoginInfo)
+				loginInfo <- loginInfoOption.map(DBIO.successful).getOrElse(insertLoginInfo)
 			} yield loginInfo
 		}
 		// combine database actions to be run sequentially
 		val actions = (for {
 			_ <- slickUsers.insertOrUpdate(dbUser)
 			loginInfo <- loginInfoAction
-			_ <- slickUserLoginInfos += DBUserLoginInfo(dbUser.userID, loginInfo.id.get)
+			_ <- slickUserLoginInfos.insertOrUpdate(DBUserLoginInfo(dbUser.userID, loginInfo.id.get))
 		} yield ()).transactionally
 		// run actions and return user afterwards
 		db.run(actions).map(_ => user)
+	}
+
+	def verifyNotRegistered(loginInfo: LoginInfo): Future[Boolean] = {
+
 	}
 }

@@ -26,7 +26,11 @@ libraryDependencies ++= Seq(
   specs2 % Test,
   "com.typesafe.play" %% "play-slick" % "1.0.1",
   "com.typesafe.play" %% "play-slick-evolutions" % "1.0.1",
+  "com.github.tototoshi" %% "slick-joda-mapper" % "2.2.0",
+  "joda-time" % "joda-time" % "2.7",
+  "org.joda" % "joda-convert" % "1.7",
   "com.h2database" % "h2" % "1.4.188",
+
   "org.webjars" % "bootstrap" % "3.3.2",
   "org.webjars" % "metisMenu" % "1.1.3",
   "org.webjars" % "morrisjs" % "0.5.1",
