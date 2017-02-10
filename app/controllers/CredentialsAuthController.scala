@@ -61,7 +61,12 @@ class CredentialsAuthController @Inject() (
   def validateDuplicateRegistration(data: SignInForm.Data)(implicit request: Request[AnyContent]): Future[Result] = {
     val credentials = Credentials(data.email, data.password)
         userService.findByEmail(data.email).flatMap{
-            case Some(_) => Future.successful(Redirect(routes.ApplicationController.signIn()).flashing("error" -> Messages("user.exists")))
+            case Some(user) =>
+              if(user.loginInfo.providerID == "credentials"){
+                continueOath(credentials, data)
+              }else{
+                Future.successful(Redirect(routes.ApplicationController.signIn()).flashing("error" -> Messages("user.exists")))
+              }
             case None => continueOath(credentials, data)
         }
   }

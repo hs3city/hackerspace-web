@@ -1,9 +1,8 @@
 error.email = Valid email required
 error.required = This field is required
 invalid.credentials = Invalid credentials!
-invalid.credentials = Invalid credentials!
 access.denied = Access denied!
-user.exists = There already exists a user with this email!
+user.already.exists = This email is already registered with another provider!
 could.not.authenticate = Could not authenticate with social provider! Please try again!
 
 home.title = Silhouette - Home

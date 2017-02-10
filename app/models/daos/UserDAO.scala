@@ -12,9 +12,6 @@ import scala.concurrent.Future
 	*/
 trait UserDAO {
 
-	def verifyNotRegistered(loginInfo: LoginInfo): Future[Boolean]
-
-
 	def find(email: String): Future[Option[User]]
 
 	/**
