@@ -93,24 +93,6 @@ trait DBTableDefinitions {
 		def * = (hasher, password, salt, loginInfoId) <> (DBPasswordInfo.tupled, DBPasswordInfo.unapply)
 	}
 
-	case class DBOAuth1Info(
-		                       id: Option[Long],
-		                       token: String,
-		                       secret: String,
-		                       loginInfoId: Long
-	                       )
-
-	class OAuth1Infos(tag: Tag) extends Table[DBOAuth1Info](tag, "oauth1info") {
-		def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
-
-		def token = column[String]("token")
-
-		def secret = column[String]("secret")
-
-		def loginInfoId = column[Long]("loginInfoId")
-
-		def * = (id.?, token, secret, loginInfoId) <> (DBOAuth1Info.tupled, DBOAuth1Info.unapply)
-	}
 
 	case class DBOAuth2Info(
 		                       id: Option[Long],
@@ -137,44 +119,12 @@ trait DBTableDefinitions {
 		def * = (id.?, accessToken, tokenType, expiresIn, refreshToken, loginInfoId) <> (DBOAuth2Info.tupled, DBOAuth2Info.unapply)
 	}
 
-	case class DBOpenIDInfo(
-		                       id: String,
-		                       loginInfoId: Long
-	                       )
-
-	class OpenIDInfos(tag: Tag) extends Table[DBOpenIDInfo](tag, "openidinfo") {
-		def id = column[String]("id", O.PrimaryKey)
-
-		def loginInfoId = column[Long]("logininfoid")
-
-		def * = (id, loginInfoId) <> (DBOpenIDInfo.tupled, DBOpenIDInfo.unapply)
-	}
-
-	case class DBOpenIDAttribute(
-		                            id: String,
-		                            key: String,
-		                            value: String
-	                            )
-
-	class OpenIDAttributes(tag: Tag) extends Table[DBOpenIDAttribute](tag, "openidattributes") {
-		def id = column[String]("id")
-
-		def key = column[String]("key")
-
-		def value = column[String]("value")
-
-		def * = (id, key, value) <> (DBOpenIDAttribute.tupled, DBOpenIDAttribute.unapply)
-	}
-
 	// table query definitions
 	val slickUsers = TableQuery[Users]
 	val slickLoginInfos = TableQuery[LoginInfos]
 	val slickUserLoginInfos = TableQuery[UserLoginInfos]
 	val slickPasswordInfos = TableQuery[PasswordInfos]
-	val slickOAuth1Infos = TableQuery[OAuth1Infos]
 	val slickOAuth2Infos = TableQuery[OAuth2Infos]
-	val slickOpenIDInfos = TableQuery[OpenIDInfos]
-	val slickOpenIDAttributes = TableQuery[OpenIDAttributes]
 
 	// queries used in multiple places
 	def loginInfoQuery(loginInfo: LoginInfo) =

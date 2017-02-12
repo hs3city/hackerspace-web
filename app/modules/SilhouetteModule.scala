@@ -38,7 +38,6 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
     bind[UserService].to[UserServiceImpl]
     bind[UserDAO].to[UserDAOImpl]
     bind[DelegableAuthInfoDAO[PasswordInfo]].to[PasswordInfoDAO]
-    bind[DelegableAuthInfoDAO[OAuth1Info]].to[OAuth1InfoDAO]
     bind[DelegableAuthInfoDAO[OAuth2Info]].to[OAuth2InfoDAO]
     bind[CacheLayer].to[PlayCacheLayer]
     bind[IDGenerator].toInstance(new SecureRandomIDGenerator())
@@ -121,17 +120,15 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
    * Provides the auth info repository.
    *
    * @param passwordInfoDAO The implementation of the delegable password auth info DAO.
-   * @param oauth1InfoDAO The implementation of the delegable OAuth1 auth info DAO.
    * @param oauth2InfoDAO The implementation of the delegable OAuth2 auth info DAO.
    * @return The auth info repository instance.
    */
   @Provides
   def provideAuthInfoRepository(
     passwordInfoDAO: DelegableAuthInfoDAO[PasswordInfo],
-    oauth1InfoDAO: DelegableAuthInfoDAO[OAuth1Info],
     oauth2InfoDAO: DelegableAuthInfoDAO[OAuth2Info]): AuthInfoRepository = {
 
-    new DelegableAuthInfoRepository(passwordInfoDAO, oauth1InfoDAO, oauth2InfoDAO)
+    new DelegableAuthInfoRepository(passwordInfoDAO, oauth2InfoDAO)
   }
 
   /**
@@ -142,19 +139,6 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
    */
   @Provides
   def provideAvatarService(httpLayer: HTTPLayer): AvatarService = new GravatarService(httpLayer)
-
-  /**
-   * Provides the OAuth1 token secret provider.
-   *
-   * @param configuration The Play configuration.
-   * @param clock The clock instance.
-   * @return The OAuth1 token secret provider implementation.
-   */
-  @Provides
-  def provideOAuth1TokenSecretProvider(configuration: Configuration, clock: Clock): OAuth1TokenSecretProvider = {
-    val settings = configuration.underlying.as[CookieSecretSettings]("silhouette.oauth1TokenSecretProvider")
-    new CookieSecretProvider(settings, clock)
-  }
 
   /**
    * Provides the OAuth2 state provider.
