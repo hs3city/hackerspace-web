@@ -1,9 +1,16 @@
 package models.daos
 
+import com.github.tototoshi.slick.MySQLJodaSupport._
 import com.mohiva.play.silhouette.api.LoginInfo
+import models.EventAttendanceStatus
+import models.EventAttendanceStatus.EventAttendanceStatus
+import models.db._
 import org.joda.time.DateTime
 import slick.driver.JdbcProfile
 import slick.lifted.ProvenShape.proveShapeOf
+
+import scala.slick.driver.MySQLDriver.api._
+import com.github.tototoshi.slick.MySQLJodaSupport._
 
 trait DBTableDefinitions {
 
@@ -11,23 +18,10 @@ trait DBTableDefinitions {
 
 	import driver.api._
 
-	case class DBUser(
-		                 userID: String,
-		                 firstName: Option[String],
-		                 lastName: Option[String],
-		                 fullName: Option[String],
-		                 email: Option[String],
-		                 avatarURL: Option[String]
-	                 )
-
-	case class Event(
-		                eventID: String,
-		                title: String,
-		                host: String,
-		                description: String,
-		                startTime: DateTime,
-		                endTime: DateTime
-	                )
+	implicit lazy val eventAttendanceStatusMapping = MappedColumnType.base[EventAttendanceStatus, String](
+		e => e.toString,
+		s => EventAttendanceStatus.withName(s)
+	)
 
 	class Users(tag: Tag) extends Table[DBUser](tag, "user") {
 		def id = column[String]("userID", O.PrimaryKey)
@@ -45,12 +39,6 @@ trait DBTableDefinitions {
 		def * = (id, firstName, lastName, fullName, email, avatarURL) <> (DBUser.tupled, DBUser.unapply)
 	}
 
-	case class DBLoginInfo(
-		                      id: Option[Long],
-		                      providerID: String,
-		                      providerKey: String
-	                      )
-
 	class LoginInfos(tag: Tag) extends Table[DBLoginInfo](tag, "logininfo") {
 		def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
 
@@ -61,10 +49,6 @@ trait DBTableDefinitions {
 		def * = (id.?, providerID, providerKey) <> (DBLoginInfo.tupled, DBLoginInfo.unapply)
 	}
 
-	case class DBUserLoginInfo(
-		                          userID: String,
-		                          loginInfoId: Long
-	                          )
 
 	class UserLoginInfos(tag: Tag) extends Table[DBUserLoginInfo](tag, "userlogininfo") {
 		def userID = column[String]("userID")
@@ -74,12 +58,6 @@ trait DBTableDefinitions {
 		def * = (userID, loginInfoId) <> (DBUserLoginInfo.tupled, DBUserLoginInfo.unapply)
 	}
 
-	case class DBPasswordInfo(
-		                         hasher: String,
-		                         password: String,
-		                         salt: Option[String],
-		                         loginInfoId: Long
-	                         )
 
 	class PasswordInfos(tag: Tag) extends Table[DBPasswordInfo](tag, "passwordinfo") {
 		def hasher = column[String]("hasher")
@@ -94,14 +72,6 @@ trait DBTableDefinitions {
 	}
 
 
-	case class DBOAuth2Info(
-		                       id: Option[Long],
-		                       accessToken: String,
-		                       tokenType: Option[String],
-		                       expiresIn: Option[Int],
-		                       refreshToken: Option[String],
-		                       loginInfoId: Long
-	                       )
 
 	class OAuth2Infos(tag: Tag) extends Table[DBOAuth2Info](tag, "oauth2info") {
 		def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
@@ -119,12 +89,43 @@ trait DBTableDefinitions {
 		def * = (id.?, accessToken, tokenType, expiresIn, refreshToken, loginInfoId) <> (DBOAuth2Info.tupled, DBOAuth2Info.unapply)
 	}
 
+	class Events(tag: Tag) extends Table[DBEvent](tag, "event") {
+
+		def id = column[String]("id", O.PrimaryKey)
+
+		def title = column[String]("title")
+
+		def host = column[String]("host")
+
+		def description = column[String]("description")
+
+		def startTime = column[DateTime]("host")
+
+		def endTime = column[DateTime]("host")
+
+		def * = (id, title, host, description, startTime, endTime) <> (DBEvent.tupled, DBEvent.unapply)
+	}
+
+	class EventParticipants(tag: Tag) extends Table[DBEventParticipant](tag, "event_participants") {
+		def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+
+		def eventID = column[Long]("eventID")
+
+		def userID = column[String]("userID")
+
+		def status = column[EventAttendanceStatus]("status")
+
+		def * = (id.?, eventID, userID, status) <> (DBEventParticipant.tupled, DBEventParticipant.unapply)
+	}
+
 	// table query definitions
 	val slickUsers = TableQuery[Users]
 	val slickLoginInfos = TableQuery[LoginInfos]
 	val slickUserLoginInfos = TableQuery[UserLoginInfos]
 	val slickPasswordInfos = TableQuery[PasswordInfos]
 	val slickOAuth2Infos = TableQuery[OAuth2Infos]
+	val slickEvents = TableQuery[Events]
+	val slickEventParticipants = TableQuery[EventParticipants]
 
 	// queries used in multiple places
 	def loginInfoQuery(loginInfo: LoginInfo) =

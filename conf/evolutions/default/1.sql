@@ -13,19 +13,13 @@ create table `user` (`userID` VARCHAR(255) NOT NULL PRIMARY KEY,`firstName` VARC
 create table `logininfo` (`id` INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,`providerID` VARCHAR(255) NOT NULL,`providerKey` VARCHAR(255) NOT NULL);
 create table `userlogininfo` (`userID` VARCHAR(255) NOT NULL,`loginInfoId` BIGINT NOT NULL, PRIMARY KEY (`userID`, `loginInfoId`));
 create table `passwordinfo` (`hasher` VARCHAR(255) NOT NULL,`password` VARCHAR(255) NOT NULL,`salt` VARCHAR(255),`loginInfoId` BIGINT NOT NULL);
-create table `oauth1info` (`id` INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,`token` VARCHAR(255) NOT NULL,`secret` VARCHAR(255) NOT NULL,`loginInfoId` BIGINT NOT NULL);
 create table `oauth2info` (`id` INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,`accesstoken` VARCHAR(255) NOT NULL,`tokentype` VARCHAR(255),`expiresin` INTEGER,`refreshtoken` VARCHAR(255),`logininfoid` BIGINT NOT NULL);
-create table `openidinfo` (`id` INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,`logininfoid` BIGINT NOT NULL);
-create table `openidattributes` (`id` VARCHAR(255) NOT NULL,`key` VARCHAR(255) NOT NULL,`value` VARCHAR(255) NOT NULL);
 
 
 
 # --- !Downs
 
-drop table `openidattributes`;
-drop table `openidinfo`;
 drop table `oauth2info`;
-drop table `oauth1info`;
 drop table `passwordinfo`;
 drop table `userlogininfo`;
 drop table `logininfo`;

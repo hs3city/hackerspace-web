@@ -21,7 +21,7 @@ libraryDependencies ++= Seq(
   "org.webjars" %% "webjars-play" % "2.4.0-1",
   "net.codingwell" %% "scala-guice" % "4.0.0",
   "net.ceedubs" %% "ficus" % "1.1.2",
-  "com.adrianhurt" %% "play-bootstrap3" % "0.4.4-P24",
+  "com.adrianhurt" %% "play-bootstrap3" % "1.1-P25-B3",
   "com.mohiva" %% "play-silhouette-testkit" % "3.0.2" % "test",
   specs2 % Test,
   "com.typesafe.play" %% "play-slick" % "1.0.1",
@@ -31,14 +31,16 @@ libraryDependencies ++= Seq(
   "org.joda" % "joda-convert" % "1.7",
   "com.h2database" % "h2" % "1.4.188",
 
-  "org.webjars" % "bootstrap" % "3.3.2",
+  "org.webjars" % "bootstrap" % "3.3.7",
   "org.webjars" % "metisMenu" % "1.1.3",
   "org.webjars" % "morrisjs" % "0.5.1",
   "org.webjars" % "font-awesome" % "4.3.0",
-  "org.webjars" % "jquery" % "2.1.3",
+  "org.webjars" % "jquery" % "2.2.3",
   "org.webjars" % "flot" % "0.8.3",
   "org.webjars" % "datatables" % "1.10.5",
-  "org.webjars" % "datatables-plugins" % "1.10.5"
+  "org.webjars" % "datatables-plugins" % "1.10.5",
+  "org.webjars" % "bootstrap-datepicker" % "1.4.0"
+
 )
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
