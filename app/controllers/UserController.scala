@@ -1,22 +1,22 @@
 package controllers
 
 import com.google.inject.Inject
-import com.mohiva.play.silhouette.api.{Environment, Silhouette}
-import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
-import models.User
+import com.mohiva.play.silhouette.api.Silhouette
 import models.services.UserService
-import play.api.i18n.MessagesApi
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.Controller
+import utils.DefaultEnv
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class UserController @Inject()(
 	                              val messagesApi: MessagesApi,
-	                              val userService: UserService,
-	                              val env: Environment[User, CookieAuthenticator])
-	extends Silhouette[User, CookieAuthenticator] {
+	                              userService: UserService,
+																silhouette: Silhouette[DefaultEnv])
+	extends Controller with I18nSupport  {
 
-	def users = SecuredAction.async { implicit request =>
+	def users = silhouette.SecuredAction.async { implicit request =>
 		userService.members().flatMap { users => {
 			Future.successful(Ok(views.html.user.users(request.identity, users)))
 			}

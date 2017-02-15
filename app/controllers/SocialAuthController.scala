@@ -5,32 +5,22 @@ import javax.inject.Inject
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.api.exceptions.ProviderException
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
-import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
 import com.mohiva.play.silhouette.impl.providers._
-import models.User
 import models.services.UserService
-import play.api.i18n.{Messages, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
-import play.api.mvc.{Action, AnyContent, Request, Result}
+import play.api.mvc._
+import utils.DefaultEnv
 
 import scala.concurrent.Future
 
-/**
-  * The social auth controller.
-  *
-  * @param messagesApi            The Play messages API.
-  * @param env                    The Silhouette environment.
-  * @param userService            The user service implementation.
-  * @param authInfoRepository     The auth info service implementation.
-  * @param socialProviderRegistry The social provider registry.
-  */
 class SocialAuthController @Inject()(
                                       val messagesApi: MessagesApi,
-                                      val env: Environment[User, CookieAuthenticator],
+                                      silhouette: Silhouette[DefaultEnv],
                                       userService: UserService,
                                       authInfoRepository: AuthInfoRepository,
                                       socialProviderRegistry: SocialProviderRegistry)
-  extends Silhouette[User, CookieAuthenticator] with Logger {
+  extends Controller with I18nSupport with Logger {
 
 
   /**
@@ -77,11 +67,11 @@ class SocialAuthController @Inject()(
     for {
       user <- userService.save(profileCasted)
       authInfo <- authInfoRepository.save(profileCasted.loginInfo, authInfo)
-      authenticator <- env.authenticatorService.create(profileCasted.loginInfo)
-      value <- env.authenticatorService.init(authenticator)
-      result <- env.authenticatorService.embed(value, Redirect(routes.ApplicationController.index()))
+      authenticator <- silhouette.env.authenticatorService.create(profileCasted.loginInfo)
+      value <- silhouette.env.authenticatorService.init(authenticator)
+      result <- silhouette.env.authenticatorService.embed(value, Redirect(routes.ApplicationController.index()))
     } yield {
-      env.eventBus.publish(LoginEvent(user, request, request2Messages))
+      silhouette.env.eventBus.publish(LoginEvent(user, request))
       result
     }
   }

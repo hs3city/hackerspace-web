@@ -9,7 +9,6 @@ import org.joda.time.DateTime
 import slick.driver.JdbcProfile
 import slick.lifted.ProvenShape.proveShapeOf
 
-import scala.slick.driver.MySQLDriver.api._
 import com.github.tototoshi.slick.MySQLJodaSupport._
 
 trait DBTableDefinitions {

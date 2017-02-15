@@ -1,5 +1,3 @@
-import scalariform.formatter.preferences._
-
 name := "hackerspace-web"
 
 version := "3.0.1"
@@ -17,15 +15,17 @@ libraryDependencies ++= Seq(
   evolutions,
   filters,
   "mysql" % "mysql-connector-java" % "5.1.24",
-  "com.mohiva" %% "play-silhouette" % "3.0.2",
-  "org.webjars" %% "webjars-play" % "2.4.0-1",
+  "com.mohiva" %% "play-silhouette" % "4.0.0",
+  "com.mohiva" %% "play-silhouette-password-bcrypt" % "4.0.0",
+  "com.mohiva" %% "play-silhouette-persistence" % "4.0.0",
+  "com.mohiva" %% "play-silhouette-crypto-jca" % "4.0.0",
+  "org.webjars" %% "webjars-play" % "2.5.0",
   "net.codingwell" %% "scala-guice" % "4.0.0",
-  "net.ceedubs" %% "ficus" % "1.1.2",
-  "com.adrianhurt" %% "play-bootstrap3" % "1.1-P25-B3",
-  "com.mohiva" %% "play-silhouette-testkit" % "3.0.2" % "test",
+  "com.iheart" %% "ficus" % "1.4.0",
+  "com.adrianhurt" %% "play-bootstrap" % "1.1-P25-B3",
   specs2 % Test,
-  "com.typesafe.play" %% "play-slick" % "1.0.1",
-  "com.typesafe.play" %% "play-slick-evolutions" % "1.0.1",
+  "com.typesafe.play" %% "play-slick" % "2.0.0",
+  "com.typesafe.play" %% "play-slick-evolutions" % "2.0.0",
   "com.github.tototoshi" %% "slick-joda-mapper" % "2.2.0",
   "joda-time" % "joda-time" % "2.7",
   "org.joda" % "joda-convert" % "1.7",
@@ -35,7 +35,7 @@ libraryDependencies ++= Seq(
   "org.webjars" % "metisMenu" % "1.1.3",
   "org.webjars" % "morrisjs" % "0.5.1",
   "org.webjars" % "font-awesome" % "4.3.0",
-  "org.webjars" % "jquery" % "2.2.3",
+  "org.webjars" % "jquery" % "2.2.4",
   "org.webjars" % "flot" % "0.8.3",
   "org.webjars" % "datatables" % "1.10.5",
   "org.webjars" % "datatables-plugins" % "1.10.5",
@@ -61,14 +61,3 @@ scalacOptions ++= Seq(
   "-Ywarn-nullary-override", // Warn when non-nullary overrides nullary, e.g. def foo() over def foo.
   "-Ywarn-numeric-widen" // Warn when numerics are widened.
 )
-
-//********************************************************
-// Scalariform settings
-//********************************************************
-
-defaultScalariformSettings
-
-ScalariformKeys.preferences := ScalariformKeys.preferences.value
-  .setPreference(FormatXml, false)
-  .setPreference(DoubleIndentClassDeclaration, false)
-  .setPreference(PreserveDanglingCloseParenthesis, true)

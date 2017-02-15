@@ -12,9 +12,10 @@ import com.mohiva.play.silhouette.impl.providers._
 import forms.SignUpForm
 import models.User
 import models.services.UserService
-import play.api.i18n.{ MessagesApi, Messages }
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
-import play.api.mvc.Action
+import play.api.mvc.{Action, Controller}
+import utils.DefaultEnv
 
 import scala.concurrent.Future
 
@@ -30,12 +31,12 @@ import scala.concurrent.Future
  */
 class SignUpController @Inject() (
   val messagesApi: MessagesApi,
-  val env: Environment[User, CookieAuthenticator],
+  silhouette: Silhouette[DefaultEnv],
   userService: UserService,
   authInfoRepository: AuthInfoRepository,
   avatarService: AvatarService,
   passwordHasher: PasswordHasher)
-  extends Silhouette[User, CookieAuthenticator] {
+  extends Controller with I18nSupport {
 
   /**
    * Registers a new user.
@@ -65,12 +66,12 @@ class SignUpController @Inject() (
               avatar <- avatarService.retrieveURL(data.email)
               user <- userService.save(user.copy(avatarURL = avatar))
               authInfo <- authInfoRepository.add(loginInfo, authInfo)
-              authenticator <- env.authenticatorService.create(loginInfo)
-              value <- env.authenticatorService.init(authenticator)
-              result <- env.authenticatorService.embed(value, Redirect(routes.ApplicationController.index()))
+              authenticator <- silhouette.env.authenticatorService.create(loginInfo)
+              value <- silhouette.env.authenticatorService.init(authenticator)
+              result <- silhouette.env.authenticatorService.embed(value, Redirect(routes.ApplicationController.index()))
             } yield {
-              env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-              env.eventBus.publish(LoginEvent(user, request, request2Messages))
+              silhouette.env.eventBus.publish(SignUpEvent(user, request))
+              silhouette.env.eventBus.publish(LoginEvent(user, request))
               result
             }
         }
