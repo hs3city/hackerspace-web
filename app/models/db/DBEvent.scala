@@ -8,5 +8,5 @@ case class DBEvent(
                     host: String,
                     description: String,
                     startTime: DateTime,
-                    endTime: DateTime
+                    endTime: Option[DateTime]
                   )

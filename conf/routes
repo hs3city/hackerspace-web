@@ -15,9 +15,11 @@ POST        /signUp                          controllers.SignUpController.signUp
 GET         /projects                        controllers.ProjectController.projects
 GET         /members                         controllers.UserController.users
 GET         /events                          controllers.EventsController.events
+GET         /event/:id                       controllers.EventsController.event(id)
 GET         /events/new                      controllers.EventsController.newEvent
 
-POST        /events                           controllers.EventsController.save
+POST        /events                          controllers.EventsController.save
+POST        /event/:eventID                  controllers.EventsController.updateAttendance(eventID)
 #GET         /members/:id                     controllers.UserController.user(id: Long)
 
 

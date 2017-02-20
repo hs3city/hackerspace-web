@@ -9,8 +9,6 @@ import org.joda.time.DateTime
 import slick.driver.JdbcProfile
 import slick.lifted.ProvenShape.proveShapeOf
 
-import com.github.tototoshi.slick.MySQLJodaSupport._
-
 trait DBTableDefinitions {
 
 	protected val driver: JdbcProfile
@@ -98,23 +96,22 @@ trait DBTableDefinitions {
 
 		def description = column[String]("description")
 
-		def startTime = column[DateTime]("host")
+		def startTime = column[DateTime]("startTime")
 
-		def endTime = column[DateTime]("host")
+		def endTime = column[Option[DateTime]]("endTime")
 
 		def * = (id, title, host, description, startTime, endTime) <> (DBEvent.tupled, DBEvent.unapply)
 	}
 
 	class EventParticipants(tag: Tag) extends Table[DBEventParticipant](tag, "event_participants") {
-		def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
 
-		def eventID = column[Long]("eventID")
+		def eventID = column[String]("eventID", O.PrimaryKey)
 
-		def userID = column[String]("userID")
+		def userID = column[String]("userID", O.PrimaryKey)
 
-		def status = column[EventAttendanceStatus]("status")
+		def status = column[Int]("status")
 
-		def * = (id.?, eventID, userID, status) <> (DBEventParticipant.tupled, DBEventParticipant.unapply)
+		def * = (eventID, userID, status) <> (DBEventParticipant.tupled, DBEventParticipant.unapply)
 	}
 
 	// table query definitions
@@ -129,6 +126,4 @@ trait DBTableDefinitions {
 	// queries used in multiple places
 	def loginInfoQuery(loginInfo: LoginInfo) =
 		slickLoginInfos.filter(dbLoginInfo => dbLoginInfo.providerID === loginInfo.providerID && dbLoginInfo.providerKey === loginInfo.providerKey)
-
-
 }

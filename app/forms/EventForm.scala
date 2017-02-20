@@ -11,7 +11,7 @@ object EventForm {
       "title" -> nonEmptyText,
       "description" -> nonEmptyText,
       "startTime" -> jodaDate,
-      "endTime" -> jodaDate
+      "endTime" -> optional(jodaDate)
     )(Data.apply)(Data.unapply)
   )
 
@@ -19,6 +19,6 @@ object EventForm {
                    title: String,
                    description: String,
                    startTime: DateTime,
-                   endTime: DateTime)
+                   endTime: Option[DateTime])
 
 }

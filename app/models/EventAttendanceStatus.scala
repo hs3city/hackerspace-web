@@ -5,7 +5,7 @@ package models
   */
 object EventAttendanceStatus extends Enumeration{
   type EventAttendanceStatus = Value
-  val Confirmed = Value("confirmed")
-  val Tentative = Value("tentative")
-  val NotAttending = Value("notAttending")
+  val Confirmed = Value("Confirmed")
+  val Tentative = Value("Tentative")
+  val NotAttending = Value("Not attending")
 }

@@ -60,7 +60,7 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     * @param userID The ID of the user to find.
     * @return The found user or None if no user for the given ID could be found.
     */
-  def find(userID: UUID) = {
+  def find(userID: UUID): Future[Option[User]] = {
     val query = for {
       dbUser <- slickUsers.filter(_.id === userID.toString)
       dbUserLoginInfo <- slickUserLoginInfos.filter(_.userID === dbUser.id)
@@ -73,7 +73,6 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
             User(
               UUID.fromString(user.userID),
               LoginInfo(loginInfo.providerID, loginInfo.providerKey),
-
               user.firstName,
               user.lastName,
               user.fullName,
@@ -83,7 +82,7 @@ class UserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     }
   }
 
-  def find(email: String) = {
+  def find(email: String): Future[Option[User]] = {
     val query = for {
       dbUser <- slickUsers.filter(_.email === email)
       dbUserLoginInfo <- slickUserLoginInfos.filter(_.userID === dbUser.id)

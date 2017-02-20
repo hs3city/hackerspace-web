@@ -1,9 +1,5 @@
 package models.db
 
-import models.EventAttendanceStatus.EventAttendanceStatus
-
-case class DBEventParticipant(id: Option[Long],
-                              eventID: Long,
+case class DBEventParticipant(eventID: String,
                               userID: String,
-                              status: EventAttendanceStatus
-                             )
+                              status: Int)
