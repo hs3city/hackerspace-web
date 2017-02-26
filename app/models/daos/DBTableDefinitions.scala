@@ -15,9 +15,9 @@ trait DBTableDefinitions {
 
 	import driver.api._
 
-	implicit lazy val eventAttendanceStatusMapping = MappedColumnType.base[EventAttendanceStatus, String](
-		e => e.toString,
-		s => EventAttendanceStatus.withName(s)
+	implicit lazy val eventAttendanceStatusMapping = MappedColumnType.base[EventAttendanceStatus, Int](
+		e => e.id,
+		s => EventAttendanceStatus.apply(s)
 	)
 
 	class Users(tag: Tag) extends Table[DBUser](tag, "user") {
@@ -109,7 +109,7 @@ trait DBTableDefinitions {
 
 		def userID = column[String]("userID", O.PrimaryKey)
 
-		def status = column[Int]("status")
+		def status = column[EventAttendanceStatus]("status")
 
 		def * = (eventID, userID, status) <> (DBEventParticipant.tupled, DBEventParticipant.unapply)
 	}

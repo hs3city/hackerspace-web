@@ -61,4 +61,25 @@ class EventDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 			}.toSeq
 		}
 	}
+
+	def getEvent(eventId: String): Future[Event] = {
+			val query = slickEvents filter (_.id === eventId) joinLeft slickEventParticipants on (_.id === _.eventID) joinLeft slickUsers on (_._2.map(_.userID) === _.id)
+
+		db.run(query.result).map { seq =>
+			seq.map {
+				case ((e1, e2), e3) => (e1, e2, e3)
+			}.groupBy(_._1).mapValues { collection =>
+				collection.map {
+					case (_, participant, user) => (participant, user)
+				} collect {
+					case (Some(a), Some(b)) => a -> b
+				}
+			}
+		}.map { seq =>
+			seq.map {
+				case (event, data) => Event(event, data)
+			}.head
+		}
+	}
+
 }

@@ -12,6 +12,8 @@ import scala.concurrent.Future
   */
 class EventService @Inject()(eventDAO: EventDAO) {
 
+  def getEvent(eventId: String) = eventDAO.getEvent(eventId)
+
   def getUserAtttendance(userID: String, eventID: String) = eventDAO.getUserAttendance(userID, eventID)
 
   def getById(eventId: String): Future[Option[DBEvent]] = eventDAO.getById(eventId)

@@ -2,7 +2,10 @@ package models
 
 import java.util.UUID
 
-import com.mohiva.play.silhouette.api.{ Identity, LoginInfo }
+import com.mohiva.play.silhouette.api.{Identity, LoginInfo}
+import models.db.DBUser
+
+import scala.language.implicitConversions
 
 /**
  * The user object.
@@ -23,3 +26,11 @@ case class User(
   fullName: Option[String],
   email: Option[String],
   avatarURL: Option[String]) extends Identity
+
+
+object User{
+	implicit def toDbUser(user: User): DBUser = {
+		DBUser(user.userID.toString, user.firstName, user.lastName, user.fullName, user.email, user.avatarURL)
+	}
+}
+

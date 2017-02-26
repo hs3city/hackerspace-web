@@ -1,7 +1,18 @@
 
-@(user: models.User, event: models.db.DBEvent, userAttendanceId: Int, attendanceForm: Form[forms.EventAttendanceForm.Data])(implicit request: RequestHeader, messages: Messages)
+@(user: models.User, event: models.Event, attendanceForm: Form[forms.EventAttendanceForm.Data])(implicit request: RequestHeader, messages: Messages)
 
 @import b3.inline.fieldConstructor
+
+@host = @{
+    event.participants.filter(p => p._2.userID == event.dBEvent.host).head._2
+}
+
+@userAttendance = @{
+    event.participants.find(p => p._2.userID == user.userID.toString) match{
+        case Some(tuple) =>  tuple._1.status
+        case None => EventAttendanceStatus.NotAttending
+    }
+}
 
 @main(Messages("home.title"), Some(user)) {
 
@@ -13,26 +24,40 @@
     }
 
     <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">@event.title</h1>
-            <p>@event.startTime - @event.endTime</p>
-        </div>
-        <div class="col-lg-12">
+        <h2>@event.dBEvent.title</h2>
+        <h3>@event.dBEvent.startTime.toString("dd MMMM, hh:mm")
+            @if(event.dBEvent.endTime.isDefined) { - @event.dBEvent.endTime.?.toString("dd MMMM, hh:mm") }
+        </h3>
+        <h4>
+            Organizer: @host.fullName
+        </h4>
+        <div >
             <h2 class="page-header">Description</h2>
-            <p>@event.description</p>
+            <p>@event.dBEvent.description</p>
         </div>
         <div>
-            @helper.form(action = routes.EventsController.updateAttendance(event.id)){
+            <h3>Guest list:</h3>
+            <ul class="list-group">
+                @for(guest <- event.participants){
+                    <li class="list-group-item">@guest._2.fullName: @guest._1.status.toString</li>
+                }
+            </ul>
+        </div>
+        <div>
+            @helper.form(action = routes.EventsController.updateAttendance(event.dBEvent.id)){
                 @helper.CSRF.formField
-                @b3.select(attendanceForm("attendance"), options = EventAttendanceStatus.values.map(value => (value.id.toString, value.toString)).toSeq, '_label -> "Your status:", 'value -> userAttendanceId.toString)
+                @b3.select(attendanceForm("attendance"), options = EventAttendanceStatus.values.map(value => (value.id.toString, value.toString)).toSeq, '_label -> "Your status:", 'value -> userAttendance.id.toString)
                 <div class="form-group">
                     <div>
-                        <button id="submit" type="submit" value="submit" class="btn">Save</button>
+                        <button id="submit" type="submit" value="submit" class="btn btn-default">Save</button>
+
                     </div>
+
                 </div>
+                <a class="btn btn-default" href='@routes.EventsController.events()'>Back</a>
             }
         </div>
     </div>
 
-    <a href='@routes.EventsController.events()'><button class="btn btn-default">Back</button></a>
+
 }
