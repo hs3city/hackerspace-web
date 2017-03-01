@@ -12,15 +12,15 @@ POST        /authenticate/credentials        controllers.CredentialsAuthControll
 POST        /signUp                          controllers.SignUpController.signUp
 
 
-GET         /projects                        controllers.ProjectController.projects
 GET         /members                         controllers.UserController.users
+GET         /members/:id                     controllers.UserController.user(id)
 GET         /events                          controllers.EventsController.events
 GET         /event/:id                       controllers.EventsController.event(id)
 GET         /events/new                      controllers.EventsController.newEvent
 
 POST        /events                          controllers.EventsController.save
 POST        /event/:eventID                  controllers.EventsController.updateAttendance(eventID)
-#GET         /members/:id                     controllers.UserController.user(id: Long)
+POST        /event/:eventID/comment          controllers.EventsController.saveComment(eventID)
 
 
 

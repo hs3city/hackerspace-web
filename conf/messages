@@ -1,4 +1,4 @@
-error.email = Valid email required
+1error.email = Valid email required
 error.required = This field is required
 invalid.credentials = Invalid credentials!
 access.denied = Access denied!
@@ -9,7 +9,6 @@ home.title = Silhouette - Home
 sign.up.title = Silhouette - Sign Up
 sign.in.title = Silhouette - Sign In
 
-toggle.navigation = Toggle navigation
 welcome.signed.in = Welcome, you are now signed in!
 
 sign.up.account = Sign up for a new account
@@ -36,6 +35,3 @@ or.use.social = Or use your existing account on one of the following services to
 google = Google
 facebook = Facebook
 twitter = Twitter
-vk = VK
-xing = Xing
-yahoo = Yahoo

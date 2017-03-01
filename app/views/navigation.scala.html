@@ -15,7 +15,7 @@
         <ul class="nav navbar-top-links navbar-right">
             @user.map { user =>
             <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="@routes.UserController.user(user.userID.toString)">
                     <span>@user.fullName</span>
                     <img src="@user.avatarURL.getOrElse(routes.Assets.at("../assets/images/silhouette.png"))" height="30px" />
                 </a>

@@ -2,8 +2,8 @@ package models.daos
 
 import javax.inject.Inject
 
-import models.Event
-import models.db.{DBEvent, DBEventParticipant}
+import models.{Event, EventComment}
+import models.db.{DBEvent, DBEventComment, DBEventParticipant}
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
@@ -22,6 +22,15 @@ class EventDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 		db.run(query.result.headOption)
 	}
 
+	def getEventComments(eventId: String) : Future[Seq[EventComment]] = {
+		val query = slickEventComments.filter(_.eventID === eventId) join slickUsers on (_.userID === _.id)
+		db.run(query.result).map{ seq =>
+			seq.map{
+				case (comment, user) => EventComment(user, comment)
+			}
+		}
+	}
+
 	def save(dbEventAttendance: DBEventParticipant) = {
 		val query = slickEventParticipants.insertOrUpdate(dbEventAttendance)
 		db.run(query).map(_ => dbEventAttendance)
@@ -35,6 +44,11 @@ class EventDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 	def save(event: DBEvent): Future[DBEvent] = {
 		val query = slickEvents.insertOrUpdate(event)
 		db.run(query).map(_ => event)
+	}
+
+	def save(comment: DBEventComment): Future[DBEventComment] = {
+		val query = slickEventComments.insertOrUpdate(comment)
+		db.run(query).map(_ => comment)
 	}
 
 	def all(): Future[Seq[DBEvent]] = {
@@ -81,5 +95,7 @@ class EventDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider,
 			}.head
 		}
 	}
+
+
 
 }

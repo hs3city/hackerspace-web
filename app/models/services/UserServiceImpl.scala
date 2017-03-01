@@ -68,4 +68,6 @@ class UserServiceImpl @Inject() (userDAO: UserDAO) extends UserService {
   def members(): Future[Seq[User]] = userDAO.all()
 
   def findByEmail(email: String): Future[Option[User]] = userDAO.find(email)
+
+  def findById(id: String): Future[Option[User]] = userDAO.find(UUID.fromString(id))
 }

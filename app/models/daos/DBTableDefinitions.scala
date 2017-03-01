@@ -55,7 +55,6 @@ trait DBTableDefinitions {
 		def * = (userID, loginInfoId) <> (DBUserLoginInfo.tupled, DBUserLoginInfo.unapply)
 	}
 
-
 	class PasswordInfos(tag: Tag) extends Table[DBPasswordInfo](tag, "passwordinfo") {
 		def hasher = column[String]("hasher")
 
@@ -67,8 +66,6 @@ trait DBTableDefinitions {
 
 		def * = (hasher, password, salt, loginInfoId) <> (DBPasswordInfo.tupled, DBPasswordInfo.unapply)
 	}
-
-
 
 	class OAuth2Infos(tag: Tag) extends Table[DBOAuth2Info](tag, "oauth2info") {
 		def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
@@ -114,6 +111,21 @@ trait DBTableDefinitions {
 		def * = (eventID, userID, status) <> (DBEventParticipant.tupled, DBEventParticipant.unapply)
 	}
 
+	class EventComments(tag: Tag) extends Table[DBEventComment](tag, "event_comments"){
+
+		def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+
+		def eventID = column[String]("eventID")
+
+		def userID = column[String]("userID")
+
+		def commentText = column[String]("commentText")
+
+		def datetime = column[DateTime]("datetime")
+
+		def * = (id.?, eventID, userID, commentText, datetime) <> (DBEventComment.tupled, DBEventComment.unapply)
+	}
+
 	// table query definitions
 	val slickUsers = TableQuery[Users]
 	val slickLoginInfos = TableQuery[LoginInfos]
@@ -122,6 +134,7 @@ trait DBTableDefinitions {
 	val slickOAuth2Infos = TableQuery[OAuth2Infos]
 	val slickEvents = TableQuery[Events]
 	val slickEventParticipants = TableQuery[EventParticipants]
+	val slickEventComments = TableQuery[EventComments]
 
 	// queries used in multiple places
 	def loginInfoQuery(loginInfo: LoginInfo) =
