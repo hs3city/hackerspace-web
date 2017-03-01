@@ -1,15 +1,12 @@
 error.email = Valid email required
-error.required = This field is required
 invalid.credentials = Invalid credentials!
 access.denied = Access denied!
-user.already.exists = This email is already registered with another provider!
 could.not.authenticate = Could not authenticate with social provider! Please try again!
 
-home.title = Silhouette - Home
-sign.up.title = Silhouette - Sign Up
-sign.in.title = Silhouette - Sign In
+home.title = Hackerspace 3city
+sign.up.title = Hackerspace 3city - Sign Up
+sign.in.title = Hackerspace 3city - Sign In
 
-toggle.navigation = Toggle navigation
 welcome.signed.in = Welcome, you are now signed in!
 
 sign.up.account = Sign up for a new account
@@ -36,6 +33,3 @@ or.use.social = Or use your existing account on one of the following services to
 google = Google
 facebook = Facebook
 twitter = Twitter
-vk = VK
-xing = Xing
-yahoo = Yahoo
